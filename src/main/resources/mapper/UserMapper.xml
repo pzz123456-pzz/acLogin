@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--  namespace  com下的mapper路径-->
+<mapper namespace="com.ac.aclogin.mapper.UserMapper">
+    <!--id ="接口中的方法名"
+　　parameterType="传入的参数类型"
+　　resultType = "返回实体类对象，使用包.类名"-->
+    <select id="selectOne" resultType="com.ac.aclogin.pojo.User">
+        select * from user where user_name = #{userName}
+    </select>
+
+    <insert id="insert">
+        insert into user(user_name,pass_word) values (#{userName},#{passWord})
+    </insert>
+</mapper>
