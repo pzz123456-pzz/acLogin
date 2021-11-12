@@ -1,0 +1,3 @@
+# acLogin
+实现redis使用的是jedis，后来发现jedis的话yml配置文件不生效，为了研究使配置文件生效又添加了一个方法使用的是redisTemplate。
+代码限制了注册的时候用户名唯一，所以存入redis的时候用的key是username
