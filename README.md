@@ -1,4 +1,5 @@
 # acLogin
+持久层框架使用的是mybatis
 实现redis使用的是jedis，后来发现jedis的话yml配置文件不生效，为了研究使配置文件生效又添加了一个方法使用的是redisTemplate。
 代码限制了注册的时候用户名唯一，所以存入redis的时候用的key是username
 此代码有小bug，管理员直接在数据库中添加相同的userName以后，相同用户登录会报错，原因是查找的时候接收的是User对象而不是List<User>集合
