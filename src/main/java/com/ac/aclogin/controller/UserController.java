@@ -159,7 +159,7 @@ public class UserController {
         if (user == null){
             int i = userService.insert(u.getUserName(),u.getPassWord());
             if (i == 1){
-                return ResultUtil.success("成功");
+                return ResultUtil.success(u.toString());
             }
         }else {
             return ResultUtil.fail("用户名已存在");
