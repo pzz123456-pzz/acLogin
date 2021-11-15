@@ -149,7 +149,10 @@ public class UserController {
     @PostMapping("/register1")
     public Result registerDto(@Validated @RequestBody UserDto userDto, Errors errors){
         if (errors.hasErrors()){
-            return ResultUtil.fail("参数有错误");
+            /**
+             *  获取dto中的默认的msg信息  errors.getFieldError().getDefaultMessage()
+             * */
+            return ResultUtil.fail(errors.getFieldError().getDefaultMessage());
         }
         User u = new User();
 //        根据名字查找是否存在这个用户名
