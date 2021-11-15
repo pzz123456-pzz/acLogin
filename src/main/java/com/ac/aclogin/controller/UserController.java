@@ -3,6 +3,8 @@ package com.ac.aclogin.controller;
 import com.ac.aclogin.dto.UserDto;
 import com.ac.aclogin.pojo.User;
 import com.ac.aclogin.service.UserService;
+import com.ac.aclogin.utils.Result;
+import com.ac.aclogin.utils.ResultUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -138,16 +140,16 @@ public class UserController {
         return "注册失败";
     }
 
-    /**验证注册  dto
-        * @Param: userName  , passWord
-        * @return: java.lang.String
+    /**验证注册  dto 返回自定义的 Result
+        * @Param: userDto  , errors
+        * @return: com.ac.aclogin.utils.Result
         * @Author: zhanzheng.pang
-        * @Date: 2021/11/15 14:31
+        * @Date: 2021/11/15 15:39
     */
     @PostMapping("/register1")
-    public String registerDto(@Validated @RequestBody UserDto userDto, Errors errors){
+    public Result registerDto(@Validated @RequestBody UserDto userDto, Errors errors){
         if (errors.hasErrors()){
-            return "传入参数有错误!";
+            return ResultUtil.fail("参数有错误");
         }
         User u = new User();
 //        根据名字查找是否存在这个用户名
@@ -157,12 +159,40 @@ public class UserController {
         if (user == null){
             int i = userService.insert(u.getUserName(),u.getPassWord());
             if (i == 1){
-                return "注册成功";
+                return ResultUtil.success("成功");
+            }
+        }else {
+            return ResultUtil.fail("用户名已存在");
+        }
+        return ResultUtil.fail("注册失败");
+    }
+
+
+    /**
+     * 验证注册  dto
+        * @Param: userDto  , errors
+        * @return: java.lang.String
+        * @Author: zhanzheng.pang
+        * @Date: 2021/11/15 15:38
+    */
+    @PostMapping("/register2")
+    public String registerDto1(@Validated @RequestBody UserDto userDto, Errors errors){
+        if (errors.hasErrors()){
+            return "参数有错误";
+        }
+        User u = new User();
+//        根据名字查找是否存在这个用户名
+        User user = userService.selectOne(userDto.getUserName());
+//        将userDto的内容给u
+        BeanUtils.copyProperties(userDto,u);
+        if (user == null){
+            int i = userService.insert(u.getUserName(),u.getPassWord());
+            if (i == 1){
+                return "成功";
             }
         }else {
             return "用户名已存在";
         }
         return "注册失败";
     }
-
 }
