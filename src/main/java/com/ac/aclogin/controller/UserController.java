@@ -1,16 +1,16 @@
 package com.ac.aclogin.controller;
 
+import com.ac.aclogin.dto.UserDto;
 import com.ac.aclogin.pojo.User;
 import com.ac.aclogin.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -129,6 +129,33 @@ public class UserController {
             return "密码不能为空";
         }else if (user == null){
             int i = userService.insert(userName,passWord);
+            if (i == 1){
+                return "注册成功";
+            }
+        }else {
+            return "用户名已存在";
+        }
+        return "注册失败";
+    }
+
+    /**验证注册  dto
+        * @Param: userName  , passWord
+        * @return: java.lang.String
+        * @Author: zhanzheng.pang
+        * @Date: 2021/11/15 14:31
+    */
+    @PostMapping("/register1")
+    public String registerDto(@Validated @RequestBody UserDto userDto, Errors errors){
+        if (errors.hasErrors()){
+            return "传入参数有错误!";
+        }
+        User u = new User();
+//        根据名字查找是否存在这个用户名
+        User user = userService.selectOne(userDto.getUserName());
+//        将userDto的内容给u
+        BeanUtils.copyProperties(userDto,u);
+        if (user == null){
+            int i = userService.insert(u.getUserName(),u.getPassWord());
             if (i == 1){
                 return "注册成功";
             }
