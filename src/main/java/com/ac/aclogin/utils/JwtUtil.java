@@ -20,6 +20,9 @@ public class JwtUtil {
     /** 自定义的密钥 */
     private static final String jwtToken = "123456#@$$";
 
+    /** 有效期  一天  毫秒 */
+    private static final int time = 1000 * 60 * 60 * 24;
+
     /**生成一个token
         * @Param: user
         * @return: java.lang.String
@@ -36,8 +39,8 @@ public class JwtUtil {
         JwtBuilder jwtBuilder = Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256,jwtToken)     //A部分
                 .setClaims(claims)                //B部分
-                .setIssuedAt(new Date())          //设置签发日期，保证token不重复
-                .setExpiration(new Date(System.currentTimeMillis() + (1000*60*60*60*24)));   //设置token有效期
+                .setIssuedAt(new Date())        //设置签发日期，保证token不重复
+                .setExpiration(new Date(System.currentTimeMillis() + time));   //设置token有效期
         String token = jwtBuilder.compact();       //生成token
         return token;
     }

@@ -9,10 +9,12 @@ import com.ac.aclogin.utils.ResultUtil;
 import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class NewUserServiceImpl implements NewUserService {
 
     @Autowired
-    RedisTemplate redisTemplate;
+    StringRedisTemplate redisTemplate;
 
     @Resource
     UserMapper userMapper;
@@ -39,7 +41,7 @@ public class NewUserServiceImpl implements NewUserService {
 //            生成token     body里是user对象
             String token = JwtUtil.createToken(user);
 //            放入redis 有效期为一天
-            redisTemplate.opsForValue().set("TOKEN_" + token, user,1, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("TOKEN_" + token, user.toString(),1,TimeUnit.DAYS);
 
             return ResultUtil.success(token);
         }
@@ -55,14 +57,22 @@ public class NewUserServiceImpl implements NewUserService {
 //        解析出来B部分没有数据
         Map<String, Object> map = JwtUtil.cheakToken(token);
         if (map == null){
-            return ResultUtil.fail("没有数据");
+            return ResultUtil.fail("token不合法");
         }
+
 //        到redis中查询token是否过期
         Object o = redisTemplate.opsForValue().get("TOKEN_" + token);
+
 //        redis中过期了
         if (o == null){
             return ResultUtil.fail("redis没有，已经过期");
         }
+
+//        分别获取token中B部分的数据
+        Object userName = map.get("userName");
+        Object userId = map.get("userId");
+        Object passWord = map.get("passWord");
+
 //        redis 中没有过期并返回value
         return ResultUtil.success(o);
     }

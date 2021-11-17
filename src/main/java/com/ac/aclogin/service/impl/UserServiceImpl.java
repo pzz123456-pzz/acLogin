@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
     public Result selectOne1(String userName, String passWord) {
         Jedis jedis = myJedisPoolConfig.setJedisPoolConfig();
 
-            if (jedis.get(userName) != null){
+            if (!StringUtils.isBlank(jedis.get(userName))){
                 if (jedis.get(userName).equals(passWord)){
                     jedis.close();
                     return  ResultUtil.success( "这是redis 的数据: 成功");
