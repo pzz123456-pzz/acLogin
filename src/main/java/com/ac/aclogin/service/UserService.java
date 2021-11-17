@@ -1,6 +1,7 @@
 package com.ac.aclogin.service;
 
 import com.ac.aclogin.pojo.User;
+import com.ac.aclogin.utils.Result;
 
 import java.util.List;
 
@@ -16,6 +17,12 @@ public  interface UserService {
      * @return User
      */
     User selectOne(String userName);
+
+    Result selectOne(String userName,String passWord);
+
+    Result selectOne1(String userName,String passWord);
+
+
 
     /**
      * 注册插入

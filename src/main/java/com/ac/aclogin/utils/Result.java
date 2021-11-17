@@ -8,7 +8,7 @@ import lombok.Data;
  * @time: 2021/11/15
  */
 @Data
-public class Result {
+public class Result<T> {
 
     /** 返回代码*/
     private String code;
@@ -17,6 +17,6 @@ public class Result {
     private String msg;
 
     /** 返回数据*/
-    private Object data;
+    private T data;
 
 }
