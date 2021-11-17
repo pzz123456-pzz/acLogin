@@ -2,6 +2,7 @@ package com.ac.aclogin.filter;
 
 
 import com.ac.aclogin.utils.JwtUtil;
+import com.ac.aclogin.utils.MyError;
 import com.ac.aclogin.utils.ResultUtil;
 import org.junit.platform.commons.util.StringUtils;
 
@@ -36,11 +37,11 @@ public class MyFilter implements Filter {
          */
 
         if (StringUtils.isBlank(token)){
-            System.out.println(" filter  ： 空token");
+            System.out.println(" filter  ：" + MyError.MY_ERROR_3.getMsg());
         }else {
             Map<String, Object> map = JwtUtil.cheakToken(token);
             if (map == null){
-                System.out.println("  filter  ：  token不合法！");
+                System.out.println("  filter  ： " + MyError.MY_ERROR_4.getMsg());
             }else {
 //              reids中有效期到达，redis已经没有了token，但是生成的jwt有效期还没过，所以会执行以下代码
                 filterChain.doFilter(servletRequest,servletResponse);

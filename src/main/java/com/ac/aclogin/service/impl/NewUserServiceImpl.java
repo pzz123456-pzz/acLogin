@@ -4,6 +4,7 @@ import com.ac.aclogin.mapper.UserMapper;
 import com.ac.aclogin.pojo.User;
 import com.ac.aclogin.service.NewUserService;
 import com.ac.aclogin.utils.JwtUtil;
+import com.ac.aclogin.utils.MyError;
 import com.ac.aclogin.utils.Result;
 import com.ac.aclogin.utils.ResultUtil;
 import org.junit.platform.commons.util.StringUtils;
@@ -35,7 +36,7 @@ public class NewUserServiceImpl implements NewUserService {
         User user = userMapper.selectOne(userName);
         System.out.println(user.getUserId());
         if (user == null){
-            return ResultUtil.fail("没有这个人");
+            return ResultUtil.fail(MyError.MY_ERROR_1.getMsg());
         }
         if (user.getUserName().equals(userName) && user.getPassWord().equals(passWord)){
 //            生成token     body里是user对象
@@ -45,19 +46,22 @@ public class NewUserServiceImpl implements NewUserService {
 
             return ResultUtil.success(token);
         }
-        return ResultUtil.fail("用户名或密码错误!");
+        return ResultUtil.fail(MyError.MY_ERROR_2.getMsg());
     }
 
     @Override
     public Result findUserByToken(String token) {
+        /**
+         * 57  -- 65 行代码再filter中已经过滤掉了
+         * */
 //        token是空的时候
         if (StringUtils.isBlank(token)){
-            return ResultUtil.fail("token不存在");
+            return ResultUtil.fail(MyError.MY_ERROR_3.getMsg());
         }
 //        解析出来B部分没有数据
         Map<String, Object> map = JwtUtil.cheakToken(token);
         if (map == null){
-            return ResultUtil.fail("token不合法");
+            return ResultUtil.fail(MyError.MY_ERROR_4.getMsg());
         }
 
 //        到redis中查询token是否过期
@@ -65,7 +69,7 @@ public class NewUserServiceImpl implements NewUserService {
 
 //        redis中过期了
         if (o == null){
-            return ResultUtil.fail("redis没有，已经过期");
+            return ResultUtil.fail(MyError.MY_ERROR_5.getMsg());
         }
 
 //        分别获取token中B部分的数据
