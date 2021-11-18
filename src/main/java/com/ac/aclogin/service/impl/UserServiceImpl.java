@@ -1,15 +1,18 @@
 package com.ac.aclogin.service.impl;
 
 import com.ac.aclogin.config.MyJedisPoolConfig;
+import com.ac.aclogin.dto.UserDto;
 import com.ac.aclogin.mapper.UserMapper;
 import com.ac.aclogin.pojo.User;
 import com.ac.aclogin.service.UserService;
 import com.ac.aclogin.utils.JwtUtil;
+import com.ac.aclogin.utils.MyError;
 import com.ac.aclogin.utils.Result;
 import com.ac.aclogin.utils.ResultUtil;
 import com.alibaba.fastjson.JSON;
 import io.netty.util.internal.StringUtil;
 import org.junit.platform.commons.util.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -39,8 +42,20 @@ public class UserServiceImpl implements UserService {
     MyJedisPoolConfig myJedisPoolConfig;
 
     @Override
-    public User selectOne(String userName) {
-        return userMapper.selectOne(userName);
+    public Result selectOne(UserDto userDto) {
+        User u = new User();
+        //        将userDto的内容给u
+        BeanUtils.copyProperties(userDto,u);
+        User user = userMapper.selectOne(u.getUserName());
+        if (user == null){
+            int i = userMapper.insert(u.getUserName(),u.getPassWord());
+            if (i == 1){
+                return ResultUtil.success(u.toString());
+            }
+        }else {
+            return ResultUtil.fail(MyError.My_ERROR_6.getMsg());
+        }
+        return ResultUtil.fail(MyError.My_ERROR_7.getMsg());
     }
 
     @Override
@@ -50,7 +65,7 @@ public class UserServiceImpl implements UserService {
             if (redisTemplate.opsForValue().get(userName).equals(passWord)){
                 return  ResultUtil.success( "这是redis 的数据: 成功");
             }else {
-                return  ResultUtil.fail(" 这是redis 的数据  ： 密码错误，登陆失败");
+                return  ResultUtil.fail(" 这是redis 的数据  ： " + MyError.MY_ERROR_2.getMsg());
             }
         }else {
             User user = userMapper.selectOne(userName);
@@ -60,7 +75,7 @@ public class UserServiceImpl implements UserService {
                     return ResultUtil.success("成功");
                 }
             }
-            return ResultUtil.fail("登录失败,请先注册！");
+            return ResultUtil.fail(MyError.MY_ERROR_1.getMsg());
         }
     }
 
@@ -74,7 +89,7 @@ public class UserServiceImpl implements UserService {
                     return  ResultUtil.success( "这是redis 的数据: 成功");
                 }else {
                     jedis.close();
-                    return  ResultUtil.fail(" 这是redis 的数据  ： 密码错误，登陆失败");
+                    return  ResultUtil.fail(" 这是redis 的数据  ："+ MyError.MY_ERROR_2.getMsg());
                 }
             }else {
                 User user = userMapper.selectOne(userName);
@@ -85,7 +100,7 @@ public class UserServiceImpl implements UserService {
                         return ResultUtil.success("登录成功");
                     }
                 }
-                return ResultUtil.fail("登录失败,请先注册！");
+                return ResultUtil.fail(MyError.MY_ERROR_1.getMsg());
             }
         }
 

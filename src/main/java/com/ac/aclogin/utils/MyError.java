@@ -12,7 +12,12 @@ public enum MyError {
     MY_ERROR_2("用户名或密码错误"),
     MY_ERROR_3("token不存在"),
     MY_ERROR_4("token不合法"),
-    MY_ERROR_5("redis没有，已经过期");
+    MY_ERROR_5("redis没有，已经过期"),
+
+    My_ERROR_6("用户名已存在"),
+    My_ERROR_7("注册失败"),
+    My_ERROR_8("传参有错误");
+
 
     private String msg;
 

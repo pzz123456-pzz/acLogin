@@ -1,5 +1,6 @@
 package com.ac.aclogin.service;
 
+import com.ac.aclogin.dto.UserDto;
 import com.ac.aclogin.pojo.User;
 import com.ac.aclogin.utils.Result;
 
@@ -13,10 +14,10 @@ public  interface UserService {
 
     /**
      * 通过用户名查找一个用户对象
-     * @param userName
+     * @param userDto
      * @return User
      */
-    User selectOne(String userName);
+    Result selectOne(UserDto userDto);
 
     Result selectOne(String userName,String passWord);
 

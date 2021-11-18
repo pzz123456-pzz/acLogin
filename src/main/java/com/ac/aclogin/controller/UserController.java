@@ -3,6 +3,7 @@ package com.ac.aclogin.controller;
 import com.ac.aclogin.dto.UserDto;
 import com.ac.aclogin.pojo.User;
 import com.ac.aclogin.service.UserService;
+import com.ac.aclogin.utils.MyError;
 import com.ac.aclogin.utils.Result;
 import com.ac.aclogin.utils.ResultUtil;
 import org.springframework.beans.BeanUtils;
@@ -116,20 +117,9 @@ public class UserController {
              * */
             return ResultUtil.fail(errors.getFieldError().getDefaultMessage());
         }
-        User u = new User();
-//        根据名字查找是否存在这个用户名
-        User user = userService.selectOne(userDto.getUserName());
-//        将userDto的内容给u
-        BeanUtils.copyProperties(userDto,u);
-        if (user == null){
-            int i = userService.insert(u.getUserName(),u.getPassWord());
-            if (i == 1){
-                return ResultUtil.success(u.toString());
-            }
-        }else {
-            return ResultUtil.fail("用户名已存在");
-        }
-        return ResultUtil.fail("注册失败");
+
+        return userService.selectOne(userDto);
+
     }
 
 
@@ -141,23 +131,11 @@ public class UserController {
         * @Date: 2021/11/15 15:38
     */
     @PostMapping("/register2")
-    public String registerDto1(@Validated @RequestBody UserDto userDto, Errors errors){
-        if (errors.hasErrors()){
-            return "参数有错误";
+    public Result registerDto1(@Validated @RequestBody UserDto userDto, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResultUtil.fail(MyError.My_ERROR_8.getMsg());
         }
-        User u = new User();
-//        根据名字查找是否存在这个用户名
-        User user = userService.selectOne(userDto.getUserName());
-//        将userDto的内容给u
-        BeanUtils.copyProperties(userDto,u);
-        if (user == null){
-            int i = userService.insert(u.getUserName(),u.getPassWord());
-            if (i == 1){
-                return "成功";
-            }
-        }else {
-            return "用户名已存在";
-        }
-        return "注册失败";
+
+        return userService.selectOne(userDto);
     }
 }
