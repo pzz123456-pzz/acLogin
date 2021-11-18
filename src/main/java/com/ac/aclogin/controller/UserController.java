@@ -1,5 +1,6 @@
 package com.ac.aclogin.controller;
 
+import com.ac.aclogin.config.MyJedisPoolConfig;
 import com.ac.aclogin.dto.UserDto;
 import com.ac.aclogin.pojo.User;
 import com.ac.aclogin.service.UserService;
@@ -31,6 +32,9 @@ public class UserController {
     @Autowired
     RedisTemplate redisTemplate;
 
+    @Autowired
+    MyJedisPoolConfig myJedisPoolConfig;
+
 
     /**
      * 登录
@@ -59,48 +63,11 @@ public class UserController {
         /**
          * 解决redisTemplate乱码问题
          */
-        Jackson2JsonRedisSerializer jackson2JsonRedisSerialize = new Jackson2JsonRedisSerializer(Object.class);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(jackson2JsonRedisSerialize);
+        myJedisPoolConfig.size();
 
         return userService.selectOne1(userName,passWord);
     }
 
-
-
-//    @PostMapping("/token")
-//    public String testToken(String userName,String passWord){
-//
-//        /**
-//         * 解决redisTemplate乱码问题
-//         */
-//        Jackson2JsonRedisSerializer jackson2JsonRedisSerialize = new Jackson2JsonRedisSerializer(Object.class);
-//        redisTemplate.setKeySerializer(new StringRedisSerializer());
-//        redisTemplate.setValueSerializer(jackson2JsonRedisSerialize);
-//
-//        User user = userService.selectOne(userName,passWord);
-//
-//        if (redisTemplate.opsForValue().get("") != null){
-//            if (redisTemplate.opsForValue().get("").equals(passWord)){
-//                return  "这是redis 的数据 ：" + userName + "登录成功,密码：" + passWord;
-//            }else {
-//                return " 这是redis 的数据  ： 密码错误，登陆失败";
-//            }
-//        }else {
-//            if (user != null){
-//                if (user.getUserName().equals(userName) && user.getPassWord().equals(passWord)) {
-//                    String token = UUID.randomUUID().toString().replaceAll("-","");
-//                    redisTemplate.opsForValue().set("SB:" + userName,token);
-//                    redisTemplate.expire(userName,10, TimeUnit.SECONDS);
-//                    System.out.println(redisTemplate.opsForValue().get("91db9927f15f440487a0927e2db1a311"));
-//                    System.out.println(redisTemplate.hasKey("91db9927f15f440487a0927e2db1a311"));
-////                    System.out.println(redisTemplate.opsForValue().get(token));
-//                    return "登录成功";
-//                }
-//            }
-//            return "登录失败,请先注册！";
-//        }
-//    }
 
 
     /**验证注册  dto 返回自定义的 Result

@@ -31,7 +31,7 @@ public class NewUserController {
     public Result token(String userName,String passWord){
 
 //        解决redis乱码问题
-//        myJedisPoolConfig.size();
+        myJedisPoolConfig.size();
 
         return userService.setToken(userName,passWord);
     }
